@@ -57,14 +57,11 @@ export async function updateCompletion(formData: FormData) {
     return { error: "Invalid square" };
   }
 
-  const { error } = await supabase
-    .from("completions")
-    .update({
-      coworker_name: coworkerName,
-      is_cross_team: isCrossTeam,
-    })
-    .eq("user_id", user.id)
-    .eq("square_id", squareId);
+  const { error } = await supabase.rpc("update_my_completion", {
+    p_square_id: squareId,
+    p_coworker_name: coworkerName,
+    p_is_cross_team: isCrossTeam,
+  });
 
   if (error) {
     return { error: error.message };
@@ -88,16 +85,9 @@ export async function deleteOwnCompletion(squareId: number) {
     return { error: "Invalid square" };
   }
 
-  // Don't allow deleting the free space
-  if (squareId === 13) {
-    return { error: "Cannot remove the free space" };
-  }
-
-  const { error } = await supabase
-    .from("completions")
-    .delete()
-    .eq("user_id", user.id)
-    .eq("square_id", squareId);
+  const { error } = await supabase.rpc("delete_my_completion", {
+    p_square_id: squareId,
+  });
 
   if (error) {
     return { error: error.message };
