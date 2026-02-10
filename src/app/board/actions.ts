@@ -36,6 +36,7 @@ export async function completeSquare(formData: FormData) {
   }
 
   revalidatePath("/board");
+  revalidatePath("/leaderboard");
   return { success: true };
 }
 
@@ -68,6 +69,7 @@ export async function updateCompletion(formData: FormData) {
   }
 
   revalidatePath("/board");
+  revalidatePath("/leaderboard");
   return { success: true };
 }
 
@@ -94,6 +96,7 @@ export async function deleteOwnCompletion(squareId: number) {
   }
 
   revalidatePath("/board");
+  revalidatePath("/leaderboard");
   return { success: true };
 }
 

@@ -64,6 +64,7 @@ export async function deleteUser(userId: string) {
   if (profileError) return { error: profileError.message };
 
   revalidatePath("/admin");
+  revalidatePath("/leaderboard");
   return { success: true };
 }
 
@@ -92,5 +93,6 @@ export async function deleteCompletion(completionId: string) {
   if (error) return { error: error.message };
 
   revalidatePath("/admin");
+  revalidatePath("/leaderboard");
   return { success: true };
 }
