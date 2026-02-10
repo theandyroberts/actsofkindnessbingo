@@ -4,7 +4,6 @@ import { calculateScore, getCompletedLines, getHeartProgress } from "@/lib/scori
 import type { Profile } from "@/lib/types";
 import BingoBoard from "@/components/BingoBoard";
 import { ensureFreeSpace } from "./actions";
-import SecretPlayerId from "@/components/SecretPlayerId";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -21,17 +20,15 @@ export default async function BoardPage() {
   await ensureFreeSpace();
 
   // Fetch squares, completions, and profile in parallel
-  const [squaresResult, completionsResult, profileResult, anonIdResult] = await Promise.all([
+  const [squaresResult, completionsResult, profileResult] = await Promise.all([
     supabase.from("squares").select("*").order("id"),
     supabase.rpc("get_my_completions"),
     supabase.rpc("get_my_profile").single(),
-    supabase.rpc("get_my_anonymous_id"),
   ]);
 
   const squares = squaresResult.data || [];
   const completions = completionsResult.data || [];
   const profile = profileResult.data as Profile | null;
-  const anonymousId = anonIdResult.data as string || "Player #????";
 
   const score = calculateScore(completions, squares);
   const completedLines = getCompletedLines(completions);
@@ -87,9 +84,6 @@ export default async function BoardPage() {
               </h1>
               <p className="text-gray-500 text-sm mt-1">
                 Hi, {profile?.display_name || "Player"}! Click a square to mark it complete.
-              </p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                Your ID: <SecretPlayerId anonymousId={anonymousId} />
               </p>
             </div>
             <div className="text-right">
