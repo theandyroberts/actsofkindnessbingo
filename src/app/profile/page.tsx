@@ -59,7 +59,7 @@ export default async function ProfilePage() {
       <main className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-1">Your Profile</h1>
         <p className="text-sm text-gray-500 mb-6">
-          Leaderboard ID: <SecretPlayerId anonymousId={anonymousId} />
+          Your ID: <SecretPlayerId anonymousId={anonymousId} />
         </p>
 
         {/* Stats */}

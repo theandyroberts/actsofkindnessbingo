@@ -10,7 +10,7 @@ export default function SecretPlayerId({
   const [revealed, setRevealed] = useState(false);
 
   return (
-    <span className="inline-flex items-center gap-1.5">
+    <span className="inline-flex items-center gap-1">
       <span className="font-semibold text-pink-500">
         {revealed ? anonymousId : "••••••••••"}
       </span>
@@ -20,10 +20,9 @@ export default function SecretPlayerId({
         onMouseLeave={() => setRevealed(false)}
         onTouchStart={() => setRevealed(true)}
         onTouchEnd={() => setRevealed(false)}
-        className="inline-flex items-center justify-center w-5 h-5 rounded bg-gray-200 hover:bg-gray-300 text-gray-500 text-xs transition select-none"
-        title="Hold to reveal your Player ID"
+        className="text-xs text-gray-400 hover:text-gray-600 bg-white px-1 rounded transition select-none"
       >
-        {revealed ? "🔓" : "🔒"}
+        [{revealed ? "hide" : "show"}]
       </button>
     </span>
   );

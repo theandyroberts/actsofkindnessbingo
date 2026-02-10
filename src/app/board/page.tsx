@@ -88,7 +88,7 @@ export default async function BoardPage() {
                 Hi, {profile?.display_name || "Player"}! Click a square to mark it complete.
               </p>
               <p className="text-xs text-gray-400 mt-0.5">
-                Your leaderboard ID: <SecretPlayerId anonymousId={anonymousId} />
+                Your ID: <SecretPlayerId anonymousId={anonymousId} />
               </p>
             </div>
             <div className="text-right">
