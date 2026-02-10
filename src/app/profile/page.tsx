@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { calculateScore, getHeartProgress } from "@/lib/scoring";
-import type { Square, Completion } from "@/lib/types";
+import type { Square, Completion, Profile } from "@/lib/types";
 import ProfileForm from "./ProfileForm";
 import LogoutButton from "./LogoutButton";
 import SecretPlayerId from "@/components/SecretPlayerId";
@@ -22,7 +22,7 @@ export default async function ProfilePage() {
     supabase.rpc("get_my_anonymous_id"),
   ]);
 
-  const profile = profileResult.data;
+  const profile = profileResult.data as Profile | null;
   const squares = (squaresResult.data || []) as Square[];
   const completions = (completionsResult.data || []) as Completion[];
   const anonymousId = anonIdResult.data as string || "Player #????";

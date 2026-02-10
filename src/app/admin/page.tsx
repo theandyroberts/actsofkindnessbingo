@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { calculateScore } from "@/lib/scoring";
-import type { Completion, Square } from "@/lib/types";
+import type { Completion, Square, Profile } from "@/lib/types";
 import AdminActions from "./AdminActions";
 import Link from "next/link";
 
@@ -26,7 +26,7 @@ export default async function AdminPage() {
     supabase.rpc("get_all_completions"),
   ]);
 
-  const profiles = profilesResult.data || [];
+  const profiles = (profilesResult.data || []) as Profile[];
   const squares = (squaresResult.data || []) as Square[];
   const allCompletions = (completionsResult.data || []) as Completion[];
 

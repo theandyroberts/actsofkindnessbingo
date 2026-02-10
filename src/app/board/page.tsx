@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { calculateScore, getCompletedLines, getHeartProgress } from "@/lib/scoring";
+import type { Profile } from "@/lib/types";
 import BingoBoard from "@/components/BingoBoard";
 import { ensureFreeSpace } from "./actions";
 import SecretPlayerId from "@/components/SecretPlayerId";
@@ -29,7 +30,7 @@ export default async function BoardPage() {
 
   const squares = squaresResult.data || [];
   const completions = completionsResult.data || [];
-  const profile = profileResult.data;
+  const profile = profileResult.data as Profile | null;
   const anonymousId = anonIdResult.data as string || "Player #????";
 
   const score = calculateScore(completions, squares);
