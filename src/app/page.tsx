@@ -99,11 +99,11 @@ export default async function HomePage() {
               <span className="text-2xl">3</span>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">
-              Win Prizes
+              Everybody Wins!
             </h3>
             <p className="text-gray-500 text-sm">
               Earn points for completions, bingo lines, the heart pattern, and
-              blackout. Top scorers will be celebrated!
+              heart-out. Top scorers will be celebrated!
             </p>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default async function HomePage() {
               <span className="font-bold text-pink-600">50 pts</span>
             </div>
             <div className="bg-pink-50 rounded-xl p-4 flex justify-between items-center">
-              <span className="text-gray-700">Pink out (whole board)</span>
+              <span className="text-gray-700">Heart-out (whole board)</span>
               <span className="font-bold text-pink-600">100 pts</span>
             </div>
           </div>

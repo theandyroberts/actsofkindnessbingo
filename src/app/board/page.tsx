@@ -124,7 +124,7 @@ export default async function BoardPage() {
               <div className="text-lg font-bold text-pink-600">
                 {score.blackoutBonus > 0 ? "Yes!" : `${completions.length}/25`}
               </div>
-              <div className="text-xs text-gray-500">Blackout</div>
+              <div className="text-xs text-gray-500">Heart-out</div>
             </div>
           </div>
         </div>
@@ -161,7 +161,7 @@ export default async function BoardPage() {
               <span className="font-semibold text-pink-600">50 pts</span>
             </div>
             <div className="flex justify-between">
-              <span>Pink out (whole board)</span>
+              <span>Heart-out (whole board)</span>
               <span className="font-semibold text-pink-600">100 pts</span>
             </div>
           </div>

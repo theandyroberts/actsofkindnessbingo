@@ -109,7 +109,7 @@ export default async function ProfilePage() {
               <span>{score.heartBonus}</span>
             </div>
             <div className="flex justify-between">
-              <span>Blackout bonus</span>
+              <span>Heart-out bonus</span>
               <span>{score.blackoutBonus}</span>
             </div>
             <div className="flex justify-between font-bold text-gray-900 pt-2 border-t border-gray-100">
