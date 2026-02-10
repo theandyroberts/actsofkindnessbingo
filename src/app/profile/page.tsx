@@ -124,6 +124,14 @@ export default async function ProfilePage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Edit Profile
           </h2>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <div className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 text-sm">
+              {profile.email}
+            </div>
+          </div>
           <ProfileForm
             currentDepartment={profile.department}
             displayName={profile.display_name}
