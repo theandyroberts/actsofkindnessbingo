@@ -16,7 +16,7 @@ export default async function ProfilePage() {
   if (!user) redirect("/login");
 
   const [profileResult, squaresResult, completionsResult, anonIdResult] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", user.id).single(),
+    supabase.rpc("get_my_profile").single(),
     supabase.from("squares").select("*").order("id"),
     supabase.rpc("get_my_completions"),
     supabase.rpc("get_my_anonymous_id"),

@@ -1,7 +1,15 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 import CountdownTimer from "@/components/CountdownTimer";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <div className="min-h-screen bg-pink-50">
       {/* Hero */}
@@ -18,18 +26,29 @@ export default function HomePage() {
             celebrate our shared mission.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/register"
-              className="px-8 py-3 bg-white text-pink-600 font-semibold rounded-lg hover:bg-pink-50 transition shadow-lg"
-            >
-              Get Started
-            </Link>
-            <Link
-              href="/login"
-              className="px-8 py-3 bg-pink-400/30 text-white font-semibold rounded-lg hover:bg-pink-400/50 transition border border-pink-300"
-            >
-              Sign In
-            </Link>
+            {user ? (
+              <Link
+                href="/board"
+                className="px-8 py-3 bg-white text-pink-600 font-semibold rounded-lg hover:bg-pink-50 transition shadow-lg"
+              >
+                Go to My Board
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/register"
+                  className="px-8 py-3 bg-white text-pink-600 font-semibold rounded-lg hover:bg-pink-50 transition shadow-lg"
+                >
+                  Get Started
+                </Link>
+                <Link
+                  href="/login"
+                  className="px-8 py-3 bg-pink-400/30 text-white font-semibold rounded-lg hover:bg-pink-400/50 transition border border-pink-300"
+                >
+                  Sign In
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

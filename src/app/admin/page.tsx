@@ -5,6 +5,8 @@ import type { Completion, Square } from "@/lib/types";
 import AdminActions from "./AdminActions";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
   const supabase = await createClient();
   const {
@@ -14,19 +16,14 @@ export default async function AdminPage() {
   if (!user) redirect("/login");
 
   // Check admin status
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
+  const { data: isAdmin } = await supabase.rpc("is_current_user_admin");
+  if (!isAdmin) redirect("/board");
 
-  if (!profile?.is_admin) redirect("/board");
-
-  // Fetch all data
+  // Fetch all data via admin RPCs
   const [profilesResult, squaresResult, completionsResult] = await Promise.all([
-    supabase.from("profiles").select("*").order("display_name"),
+    supabase.rpc("get_all_profiles"),
     supabase.from("squares").select("*").order("id"),
-    supabase.from("completions").select("*"),
+    supabase.rpc("get_all_completions"),
   ]);
 
   const profiles = profilesResult.data || [];

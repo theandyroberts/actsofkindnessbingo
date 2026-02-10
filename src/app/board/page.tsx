@@ -23,7 +23,7 @@ export default async function BoardPage() {
   const [squaresResult, completionsResult, profileResult, anonIdResult] = await Promise.all([
     supabase.from("squares").select("*").order("id"),
     supabase.rpc("get_my_completions"),
-    supabase.from("profiles").select("*").eq("id", user.id).single(),
+    supabase.rpc("get_my_profile").single(),
     supabase.rpc("get_my_anonymous_id"),
   ]);
 
