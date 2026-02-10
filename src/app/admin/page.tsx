@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { calculateScore } from "@/lib/scoring";
 import type { Completion, Square, Profile } from "@/lib/types";
-import AdminActions from "./AdminActions";
+import AdminTable from "./AdminTable";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -145,69 +145,7 @@ export default async function AdminPage() {
         </div>
 
         {/* Users Table */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900">All Players</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 text-left text-sm text-gray-500">
-                  <th className="px-4 py-3 font-medium">Name</th>
-                  <th className="px-4 py-3 font-medium">Email</th>
-                  <th className="px-4 py-3 font-medium">Department</th>
-                  <th className="px-4 py-3 font-medium text-center">
-                    Squares
-                  </th>
-                  <th className="px-4 py-3 font-medium text-right">Points</th>
-                  <th className="px-4 py-3 font-medium text-center">Admin</th>
-                  <th className="px-4 py-3 font-medium text-center">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {userStats.map((u) => (
-                  <tr key={u.id} className="border-t border-gray-100">
-                    <td className="px-4 py-3 font-medium text-gray-900">
-                      {u.display_name}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600 text-sm">
-                      {u.email}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600 text-sm">
-                      {u.department}
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-600">
-                      {u.completionCount}/25
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <span className="font-bold text-pink-600">
-                        {u.score.total}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {u.is_admin ? (
-                        <span className="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full text-xs">
-                          Admin
-                        </span>
-                      ) : (
-                        <span className="text-gray-400 text-xs">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <AdminActions
-                        userId={u.id}
-                        userName={u.display_name}
-                        isAdmin={u.is_admin}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <AdminTable users={userStats} />
       </main>
     </div>
   );

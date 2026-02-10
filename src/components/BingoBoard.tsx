@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Square, Completion } from "@/lib/types";
 import CompletionModal from "./CompletionModal";
+import EditCompletionModal from "./EditCompletionModal";
 
 interface BingoBoardProps {
   squares: Square[];
@@ -17,6 +18,7 @@ export default function BingoBoard({
   completedLineSquareIds,
 }: BingoBoardProps) {
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
+  const [editingSquare, setEditingSquare] = useState<Square | null>(null);
   const router = useRouter();
 
   const completionMap = new Map(completions.map((c) => [c.square_id, c]));
@@ -28,8 +30,12 @@ export default function BingoBoard({
 
   function handleSquareClick(square: Square) {
     if (square.is_free) return;
-    if (completionMap.has(square.id)) return;
-    setSelectedSquare(square);
+    const completion = completionMap.get(square.id);
+    if (completion) {
+      setEditingSquare(square);
+    } else {
+      setSelectedSquare(square);
+    }
   }
 
   return (
@@ -44,7 +50,7 @@ export default function BingoBoard({
             <button
               key={square.id}
               onClick={() => handleSquareClick(square)}
-              disabled={isCompleted || square.is_free}
+              disabled={square.is_free}
               className={`
                 relative aspect-square p-1 sm:p-2 rounded-lg text-xs sm:text-sm font-medium
                 flex flex-col items-center justify-center text-center
@@ -52,8 +58,8 @@ export default function BingoBoard({
                 ${
                   isCompleted
                     ? square.is_heart
-                      ? "bg-pink-400 text-white shadow-inner"
-                      : "bg-teal-500 text-white shadow-inner"
+                      ? "bg-pink-400 text-white shadow-inner hover:brightness-110 cursor-pointer"
+                      : "bg-teal-500 text-white shadow-inner hover:brightness-110 cursor-pointer"
                     : square.is_heart
                     ? "bg-pink-100 hover:bg-pink-200 text-pink-800 border-2 border-pink-300 hover:shadow-md cursor-pointer"
                     : "bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200 hover:shadow-md cursor-pointer"
@@ -84,6 +90,18 @@ export default function BingoBoard({
           onClose={() => setSelectedSquare(null)}
           onComplete={() => {
             setSelectedSquare(null);
+            router.refresh();
+          }}
+        />
+      )}
+
+      {editingSquare && completionMap.get(editingSquare.id) && (
+        <EditCompletionModal
+          square={editingSquare}
+          completion={completionMap.get(editingSquare.id)!}
+          onClose={() => setEditingSquare(null)}
+          onSaved={() => {
+            setEditingSquare(null);
             router.refresh();
           }}
         />
