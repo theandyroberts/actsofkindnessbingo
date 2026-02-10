@@ -14,9 +14,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Acts of Kindness Bingo | Providence Health Systems",
+  title: "Acts of Kindness Bingo",
   description:
     "Play Acts of Kindness Birthday Bingo — inspired by Mother Emilie Gamelin. Complete acts of kindness, earn points, and climb the leaderboard!",
+  icons: {
+    icon: [
+      { url: "/favicon.ico?v=3", sizes: "64x64" },
+      { url: "/icon.svg?v=3", type: "image/svg+xml" },
+    ],
+  },
 };
 
 export default function RootLayout({
