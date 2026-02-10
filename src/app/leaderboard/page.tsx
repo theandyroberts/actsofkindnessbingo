@@ -17,6 +17,7 @@ interface LeaderboardEntry {
   anonymous_id: string;
   completionCount: number;
   score: ScoreBreakdown;
+  completedSquareIds: Set<number>;
 }
 
 export default async function LeaderboardPage() {
@@ -60,6 +61,7 @@ export default async function LeaderboardPage() {
       anonymous_id: userData.anonymous_id,
       completionCount: userData.completions.length,
       score,
+      completedSquareIds: new Set(userData.completions.map((c) => c.square_id)),
     });
   }
 
@@ -114,61 +116,55 @@ export default async function LeaderboardPage() {
           <CountdownTimer />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="space-y-3">
           {entries.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
+            <div className="bg-white rounded-2xl shadow-sm p-8 text-center text-gray-500">
               No players yet. Be the first to score!
             </div>
           ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 text-left text-sm text-gray-500">
-                  <th className="px-4 py-3 font-medium">Rank</th>
-                  <th className="px-4 py-3 font-medium">Player</th>
-                  <th className="px-4 py-3 font-medium text-center">
-                    Squares
-                  </th>
-                  <th className="px-4 py-3 font-medium text-right">Points</th>
-                </tr>
-              </thead>
-              <tbody>
-                {entries.map((entry, i) => (
-                  <tr
-                    key={entry.anonymous_id}
-                    className={`border-t border-gray-100 ${
-                      i < 3 ? "bg-pink-50/50" : ""
-                    }`}
-                  >
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
-                          i === 0
-                            ? "bg-yellow-400 text-yellow-900"
-                            : i === 1
-                            ? "bg-gray-300 text-gray-700"
-                            : i === 2
-                            ? "bg-orange-300 text-orange-900"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        {i + 1}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 font-medium text-gray-900">
-                      {entry.anonymous_id}
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-600">
-                      {entry.completionCount}/25
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <span className="text-lg font-bold text-pink-600">
-                        {entry.score.total}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            entries.map((entry, i) => (
+              <div
+                key={entry.anonymous_id}
+                className={`bg-white rounded-2xl shadow-sm p-4 flex items-center gap-4 ${
+                  i < 3 ? "ring-1 ring-pink-200" : ""
+                }`}
+              >
+                <span
+                  className={`flex-shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold ${
+                    i === 0
+                      ? "bg-yellow-400 text-yellow-900"
+                      : i === 1
+                      ? "bg-gray-300 text-gray-700"
+                      : i === 2
+                      ? "bg-orange-300 text-orange-900"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {i + 1}
+                </span>
+                <div className="flex-shrink-0 grid grid-cols-5 gap-px leading-none" title={`${entry.completionCount}/25 squares`}>
+                  {sortedSquares.map((sq) => (
+                    <span key={sq.id} className="text-[10px] sm:text-xs">
+                      {entry.completedSquareIds.has(sq.id) ? "💗" : "◻️"}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 text-sm truncate">
+                    {entry.anonymous_id}
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    {entry.completionCount}/25 squares
+                  </div>
+                </div>
+                <div className="flex-shrink-0 text-right">
+                  <div className="text-lg font-bold text-pink-600">
+                    {entry.score.total}
+                  </div>
+                  <div className="text-xs text-gray-400">pts</div>
+                </div>
+              </div>
+            ))
           )}
         </div>
 
