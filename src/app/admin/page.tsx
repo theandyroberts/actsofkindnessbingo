@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { calculateScore } from "@/lib/scoring";
-import type { Completion, Square, Profile } from "@/lib/types";
+import type { Completion, Square, Profile, Testimonial } from "@/lib/types";
 import AdminTable from "./AdminTable";
+import TestimonialList from "./TestimonialList";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -20,15 +21,17 @@ export default async function AdminPage() {
   if (!isAdmin) redirect("/board");
 
   // Fetch all data via admin RPCs
-  const [profilesResult, squaresResult, completionsResult] = await Promise.all([
+  const [profilesResult, squaresResult, completionsResult, testimonialsResult] = await Promise.all([
     supabase.rpc("get_all_profiles"),
     supabase.from("squares").select("*").order("id"),
     supabase.rpc("get_all_completions"),
+    supabase.rpc("get_all_testimonials"),
   ]);
 
   const profiles = (profilesResult.data || []) as Profile[];
   const squares = (squaresResult.data || []) as Square[];
   const allCompletions = (completionsResult.data || []) as Completion[];
+  const testimonials = (testimonialsResult.data || []) as Testimonial[];
 
   // Calculate stats per user
   const userStats = profiles.map((p) => {
@@ -142,6 +145,20 @@ export default async function AdminPage() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Kindness Stories */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">
+            Kindness Stories ({testimonials.length})
+          </h2>
+          {testimonials.length === 0 ? (
+            <div className="bg-white rounded-2xl shadow-sm p-6 text-center text-gray-400 text-sm">
+              No testimonials yet.
+            </div>
+          ) : (
+            <TestimonialList testimonials={testimonials} />
+          )}
         </div>
 
         {/* Users Table */}

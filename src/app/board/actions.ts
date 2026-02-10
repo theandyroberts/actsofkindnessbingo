@@ -97,6 +97,32 @@ export async function deleteOwnCompletion(squareId: number) {
   return { success: true };
 }
 
+export async function submitTestimonial(message: string, isAnonymous: boolean) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  if (!message.trim()) {
+    return { error: "Message is required" };
+  }
+
+  const { error } = await supabase.rpc("submit_my_testimonial", {
+    p_message: message.trim(),
+    p_is_anonymous: isAnonymous,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
 export async function ensureFreeSpace() {
   const supabase = await createClient();
   const {

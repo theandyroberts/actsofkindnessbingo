@@ -41,3 +41,14 @@ export interface LeaderboardEntry {
   cross_team_count: number;
   score: ScoreBreakdown;
 }
+
+export interface Testimonial {
+  id: string;
+  user_id: string;
+  display_name: string;
+  anonymous_id: string;
+  message: string;
+  is_anonymous: boolean;
+  paraphrase: string | null;
+  created_at: string;
+}

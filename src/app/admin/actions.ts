@@ -67,6 +67,20 @@ export async function deleteUser(userId: string) {
   return { success: true };
 }
 
+export async function updateParaphrase(id: string, paraphrase: string) {
+  const supabase = await requireAdmin();
+
+  const { error } = await supabase.rpc("update_testimonial_paraphrase", {
+    p_id: id,
+    p_paraphrase: paraphrase,
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin");
+  return { success: true };
+}
+
 export async function deleteCompletion(completionId: string) {
   const supabase = await requireAdmin();
 
