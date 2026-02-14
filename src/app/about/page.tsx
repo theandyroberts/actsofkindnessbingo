@@ -1,6 +1,12 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <div className="min-h-screen bg-pink-50">
       <header className="bg-white shadow-sm">
@@ -21,6 +27,14 @@ export default function AboutPage() {
             >
               Leaderboard
             </Link>
+            {user && (
+              <Link
+                href="/profile"
+                className="text-gray-600 hover:text-pink-600 transition"
+              >
+                Profile
+              </Link>
+            )}
           </nav>
         </div>
       </header>

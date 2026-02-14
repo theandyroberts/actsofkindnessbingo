@@ -23,6 +23,10 @@ interface LeaderboardEntry {
 export default async function LeaderboardPage() {
   const supabase = await createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const [squaresResult, lbResult] = await Promise.all([
     supabase.from("squares").select("*").order("id"),
     supabase.rpc("get_leaderboard_full"),
@@ -136,6 +140,14 @@ export default async function LeaderboardPage() {
             >
               About
             </Link>
+            {user && (
+              <Link
+                href="/profile"
+                className="text-gray-600 hover:text-pink-600 transition"
+              >
+                Profile
+              </Link>
+            )}
           </nav>
         </div>
       </header>
@@ -191,9 +203,16 @@ export default async function LeaderboardPage() {
           </div>
         </div>
 
-        <div className="mb-6 text-center text-sm text-gray-500">
-          Identities are anonymous. Only you can see your own name.
+        <div className="mt-12 mb-2 text-center">
+          <h2 className="text-2xl font-bold text-gray-900">Our Leaders</h2>
         </div>
+        <p className="text-center text-sm text-gray-500 mb-6">
+          Identities are anonymous. You can see your Player # on your{" "}
+          <Link href="/profile" className="text-pink-600 hover:text-pink-700 underline">
+            Profile
+          </Link>
+          .
+        </p>
 
         <div className="space-y-3">
           {entries.length === 0 ? (
