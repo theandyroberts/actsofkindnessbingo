@@ -97,8 +97,6 @@ export default async function LeaderboardPage() {
     [125, 10, 76],   // 16 Mulberry
     [108, 8, 63],    // 17 Berry Red
     [90, 6, 51],     // 18 Dark Cherry
-    [71, 4, 39],     // 19 Black Cherry
-    [53, 3, 27],     // 20 Deep Garnet
   ] as const;
 
   function getHeatmapBg(ratio: number): string {
