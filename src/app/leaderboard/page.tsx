@@ -75,8 +75,17 @@ export default async function LeaderboardPage() {
       (squareCompletionCounts.get(row.square_id) || 0) + 1
     );
   }
-  const maxCount = Math.max(1, ...squareCompletionCounts.values());
   const totalPlayers = userMap.size;
+
+  // Continuous heatmap color: light pink → dark cherry (almost black)
+  const lightColor = { r: 252, g: 231, b: 243 }; // soft pink
+  const darkColor = { r: 38, g: 2, b: 14 };      // dark dark cherry
+  function getHeatmapBg(ratio: number): string {
+    const r = Math.round(lightColor.r + (darkColor.r - lightColor.r) * ratio);
+    const g = Math.round(lightColor.g + (darkColor.g - lightColor.g) * ratio);
+    const b = Math.round(lightColor.b + (darkColor.b - lightColor.b) * ratio);
+    return `rgb(${r}, ${g}, ${b})`;
+  }
 
   // Sort squares into grid order
   const sortedSquares = [...squares].sort(
@@ -114,6 +123,50 @@ export default async function LeaderboardPage() {
           </h1>
           <p className="text-gray-500 mb-6">Time remaining</p>
           <CountdownTimer />
+        </div>
+
+        {/* Heatmap */}
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+            Kindness Heatmap
+          </h2>
+          <p className="text-sm text-gray-500 text-center mb-4">
+            Which acts are spreading the most?
+          </p>
+          <div className="grid grid-cols-5 gap-1.5 sm:gap-2 max-w-2xl mx-auto">
+            {sortedSquares.map((square) => {
+              const count = squareCompletionCounts.get(square.id) || 0;
+              const ratio = totalPlayers > 0 ? count / totalPlayers : 0;
+              const useWhiteText = ratio > 0.25;
+
+              return (
+                <div
+                  key={square.id}
+                  className="aspect-square p-1 sm:p-2 rounded-lg text-xs font-medium flex flex-col items-center justify-center text-center border border-pink-200 transition-colors"
+                  style={{
+                    backgroundColor: count === 0 ? "#fff" : getHeatmapBg(ratio),
+                    color: useWhiteText ? "#ffffff" : "#4a3040",
+                  }}
+                >
+                  <span className="leading-tight text-[10px] sm:text-xs">
+                    {square.is_free ? "FREE" : square.text}
+                  </span>
+                  <span
+                    className="text-[10px] mt-0.5 font-bold"
+                    style={{
+                      color: useWhiteText ? "rgba(255,255,255,0.85)" : "#db2777",
+                    }}
+                  >
+                    {count}/{totalPlayers}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mb-6 text-center text-sm text-gray-500">
+          Identities are anonymous. Only you can see your own name.
         </div>
 
         <div className="space-y-3">
@@ -166,64 +219,6 @@ export default async function LeaderboardPage() {
               </div>
             ))
           )}
-        </div>
-
-        <div className="mt-6 text-center text-sm text-gray-500">
-          Identities are anonymous. Only you can see your own name.
-        </div>
-
-        {/* Heatmap */}
-        <div className="mt-10">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
-            Kindness Heatmap
-          </h2>
-          <p className="text-sm text-gray-500 text-center mb-4">
-            Which acts are spreading the most?
-          </p>
-          <div className="grid grid-cols-5 gap-1.5 sm:gap-2 max-w-2xl mx-auto">
-            {sortedSquares.map((square) => {
-              const count = squareCompletionCounts.get(square.id) || 0;
-              const intensity = maxCount > 0 ? count / maxCount : 0;
-              // Map intensity to pink shades: 0 = white, 1 = deep pink
-              const bg =
-                count === 0
-                  ? "bg-white"
-                  : intensity < 0.25
-                  ? "bg-pink-100"
-                  : intensity < 0.5
-                  ? "bg-pink-200"
-                  : intensity < 0.75
-                  ? "bg-pink-300"
-                  : "bg-pink-400";
-              const textColor =
-                intensity >= 0.75 ? "text-white" : intensity >= 0.5 ? "text-pink-900" : "text-gray-700";
-
-              return (
-                <div
-                  key={square.id}
-                  className={`
-                    aspect-square p-1 sm:p-2 rounded-lg text-xs font-medium
-                    flex flex-col items-center justify-center text-center
-                    border border-pink-200 transition-colors
-                    ${bg} ${textColor}
-                  `}
-                >
-                  <span className="leading-tight text-[10px] sm:text-xs">
-                    {square.is_free ? "FREE" : square.text}
-                  </span>
-                  <span
-                    className={`text-[10px] mt-0.5 font-bold ${
-                      intensity >= 0.75
-                        ? "text-white/80"
-                        : "text-pink-500"
-                    }`}
-                  >
-                    {count}/{totalPlayers}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
         </div>
       </main>
     </div>
