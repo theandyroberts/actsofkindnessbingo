@@ -77,13 +77,39 @@ export default async function LeaderboardPage() {
   }
   const totalPlayers = userMap.size;
 
-  // Continuous heatmap color: light pink → dark cherry (almost black)
-  const lightColor = { r: 252, g: 231, b: 243 }; // soft pink
-  const darkColor = { r: 38, g: 2, b: 14 };      // dark dark cherry
+  // 20-stop pink palette from whisper pink → deep garnet
+  const heatmapStops = [
+    [255, 241, 245], // 1  Whisper Pink
+    [255, 228, 236], // 2  Blush Mist
+    [255, 214, 229], // 3  Petal Pink
+    [255, 193, 214], // 4  Soft Rose
+    [255, 171, 200], // 5  Ballet Pink
+    [255, 149, 187], // 6  Cotton Candy
+    [255, 127, 173], // 7  Bubblegum
+    [255, 105, 159], // 8  Flamingo
+    [249, 85, 148],  // 9  Rose Pop
+    [236, 72, 153],  // 10 Hot Pink
+    [214, 51, 132],  // 11 Raspberry
+    [194, 37, 116],  // 12 Deep Rose
+    [181, 23, 107],  // 13 Cerise
+    [161, 16, 98],   // 14 Fuchsia Wine
+    [143, 12, 87],   // 15 Crimson Pink
+    [125, 10, 76],   // 16 Mulberry
+    [108, 8, 63],    // 17 Berry Red
+    [90, 6, 51],     // 18 Dark Cherry
+    [71, 4, 39],     // 19 Black Cherry
+    [53, 3, 27],     // 20 Deep Garnet
+  ] as const;
+
   function getHeatmapBg(ratio: number): string {
-    const r = Math.round(lightColor.r + (darkColor.r - lightColor.r) * ratio);
-    const g = Math.round(lightColor.g + (darkColor.g - lightColor.g) * ratio);
-    const b = Math.round(lightColor.b + (darkColor.b - lightColor.b) * ratio);
+    // Map ratio (0–1) to a position across the 20 stops
+    const pos = ratio * (heatmapStops.length - 1);
+    const lo = Math.floor(pos);
+    const hi = Math.min(lo + 1, heatmapStops.length - 1);
+    const t = pos - lo;
+    const r = Math.round(heatmapStops[lo][0] + (heatmapStops[hi][0] - heatmapStops[lo][0]) * t);
+    const g = Math.round(heatmapStops[lo][1] + (heatmapStops[hi][1] - heatmapStops[lo][1]) * t);
+    const b = Math.round(heatmapStops[lo][2] + (heatmapStops[hi][2] - heatmapStops[lo][2]) * t);
     return `rgb(${r}, ${g}, ${b})`;
   }
 
@@ -133,35 +159,37 @@ export default async function LeaderboardPage() {
           <p className="text-sm text-gray-500 text-center mb-4">
             Which acts are spreading the most?
           </p>
-          <div className="grid grid-cols-5 gap-1.5 sm:gap-2 max-w-2xl mx-auto">
-            {sortedSquares.map((square) => {
-              const count = squareCompletionCounts.get(square.id) || 0;
-              const ratio = totalPlayers > 0 ? count / totalPlayers : 0;
-              const useWhiteText = ratio > 0.25;
+          <div className="bg-white rounded-2xl shadow-sm p-3 sm:p-4 max-w-2xl mx-auto">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+              {sortedSquares.map((square) => {
+                const count = squareCompletionCounts.get(square.id) || 0;
+                const ratio = totalPlayers > 0 ? count / totalPlayers : 0;
+                const useWhiteText = ratio > 0.35;
 
-              return (
-                <div
-                  key={square.id}
-                  className="aspect-square p-1 sm:p-2 rounded-lg text-xs font-medium flex flex-col items-center justify-center text-center border border-pink-200 transition-colors"
-                  style={{
-                    backgroundColor: count === 0 ? "#fff" : getHeatmapBg(ratio),
-                    color: useWhiteText ? "#ffffff" : "#4a3040",
-                  }}
-                >
-                  <span className="leading-tight text-[10px] sm:text-xs">
-                    {square.is_free ? "FREE" : square.text}
-                  </span>
-                  <span
-                    className="text-[10px] mt-0.5 font-bold"
+                return (
+                  <div
+                    key={square.id}
+                    className="aspect-square p-1 sm:p-2 rounded-lg text-xs font-medium flex flex-col items-center justify-center text-center transition-colors"
                     style={{
-                      color: useWhiteText ? "rgba(255,255,255,0.85)" : "#db2777",
+                      backgroundColor: count === 0 ? "#fdf2f8" : getHeatmapBg(ratio),
+                      color: useWhiteText ? "#ffffff" : "#4a3040",
                     }}
                   >
-                    {count}/{totalPlayers}
-                  </span>
-                </div>
-              );
-            })}
+                    <span className="leading-tight text-[10px] sm:text-xs">
+                      {square.is_free ? "FREE" : square.text}
+                    </span>
+                    <span
+                      className="text-[10px] mt-0.5 font-bold"
+                      style={{
+                        color: useWhiteText ? "rgba(255,255,255,0.85)" : "#db2777",
+                      }}
+                    >
+                      {count}/{totalPlayers}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
