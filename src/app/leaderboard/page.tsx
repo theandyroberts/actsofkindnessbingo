@@ -81,8 +81,8 @@ export default async function LeaderboardPage() {
   }
   const totalPlayers = userMap.size;
 
-  // 20-stop pink palette from whisper pink → deep garnet
-  const heatmapStops = [
+  // Pink palette for heart squares (whisper pink → deep garnet)
+  const pinkStops = [
     [255, 241, 245], // 1  Whisper Pink
     [255, 228, 236], // 2  Blush Mist
     [255, 214, 229], // 3  Petal Pink
@@ -103,15 +103,36 @@ export default async function LeaderboardPage() {
     [90, 6, 51],     // 18 Dark Cherry
   ] as const;
 
-  function getHeatmapBg(ratio: number): string {
-    // Map ratio (0–1) to a position across the 20 stops
-    const pos = ratio * (heatmapStops.length - 1);
+  // Teal palette for outer squares (light teal → deep teal, based on rgb(20, 184, 166))
+  const tealStops = [
+    [232, 248, 246], // 1  Whisper Teal
+    [209, 241, 237], // 2  Seafoam Mist
+    [183, 232, 226], // 3  Pale Aqua
+    [155, 221, 213], // 4  Soft Teal
+    [127, 210, 200], // 5  Mint Teal
+    [99, 200, 188],  // 6  Lagoon
+    [72, 192, 178],  // 7  Ocean Teal
+    [44, 184, 168],  // 8  Sea Green
+    [20, 184, 166],  // 9  Teal (base)
+    [18, 168, 152],  // 10 Deep Teal
+    [16, 150, 136],  // 11 Jade
+    [14, 133, 120],  // 12 Evergreen
+    [12, 116, 105],  // 13 Forest Teal
+    [10, 100, 90],   // 14 Dark Jade
+    [8, 84, 76],     // 15 Deep Sea
+    [6, 70, 63],     // 16 Emerald Night
+    [4, 56, 50],     // 17 Dark Teal
+    [2, 42, 38],     // 18 Abyss Teal
+  ] as const;
+
+  function interpolateStops(stops: readonly (readonly [number, number, number])[], ratio: number): string {
+    const pos = ratio * (stops.length - 1);
     const lo = Math.floor(pos);
-    const hi = Math.min(lo + 1, heatmapStops.length - 1);
+    const hi = Math.min(lo + 1, stops.length - 1);
     const t = pos - lo;
-    const r = Math.round(heatmapStops[lo][0] + (heatmapStops[hi][0] - heatmapStops[lo][0]) * t);
-    const g = Math.round(heatmapStops[lo][1] + (heatmapStops[hi][1] - heatmapStops[lo][1]) * t);
-    const b = Math.round(heatmapStops[lo][2] + (heatmapStops[hi][2] - heatmapStops[lo][2]) * t);
+    const r = Math.round(stops[lo][0] + (stops[hi][0] - stops[lo][0]) * t);
+    const g = Math.round(stops[lo][1] + (stops[hi][1] - stops[lo][1]) * t);
+    const b = Math.round(stops[lo][2] + (stops[hi][2] - stops[lo][2]) * t);
     return `rgb(${r}, ${g}, ${b})`;
   }
 
@@ -175,14 +196,19 @@ export default async function LeaderboardPage() {
                 const count = squareCompletionCounts.get(square.id) || 0;
                 const ratio = totalPlayers > 0 ? count / totalPlayers : 0;
                 const useWhiteText = ratio > 0.35;
+                const isHeart = square.is_heart;
+                const stops = isHeart ? pinkStops : tealStops;
+                const zeroBg = isHeart ? "#fdf2f8" : "#f0fdfa";
+                const defaultText = isHeart ? "#4a3040" : "#1a3a36";
+                const countColor = isHeart ? "#db2777" : "#0d9488";
 
                 return (
                   <div
                     key={square.id}
                     className="aspect-square p-1 sm:p-2 rounded-lg text-xs font-medium flex flex-col items-center justify-center text-center transition-colors"
                     style={{
-                      backgroundColor: count === 0 ? "#fdf2f8" : getHeatmapBg(ratio),
-                      color: useWhiteText ? "#ffffff" : "#4a3040",
+                      backgroundColor: count === 0 ? zeroBg : interpolateStops(stops, ratio),
+                      color: useWhiteText ? "#ffffff" : defaultText,
                     }}
                   >
                     <span className="leading-tight text-[10px] sm:text-xs">
@@ -191,7 +217,7 @@ export default async function LeaderboardPage() {
                     <span
                       className="text-[10px] mt-0.5 font-bold"
                       style={{
-                        color: useWhiteText ? "rgba(255,255,255,0.85)" : "#db2777",
+                        color: useWhiteText ? "rgba(255,255,255,0.85)" : countColor,
                       }}
                     >
                       {count}/{totalPlayers}
