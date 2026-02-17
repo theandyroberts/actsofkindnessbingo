@@ -4,12 +4,19 @@ import { useState, useEffect } from "react";
 
 const STORAGE_KEY = "aok-gate-passed";
 
+// Set to true to re-enable the passphrase gate
+const GATE_ENABLED = false;
+
 export default function SiteGate({ children }: { children: React.ReactNode }) {
   const [passed, setPassed] = useState<boolean | null>(null);
   const [input, setInput] = useState("");
   const [shake, setShake] = useState(false);
 
   useEffect(() => {
+    if (!GATE_ENABLED) {
+      setPassed(true);
+      return;
+    }
     setPassed(localStorage.getItem(STORAGE_KEY) === "true");
   }, []);
 
